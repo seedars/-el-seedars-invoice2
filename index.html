@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EL Seedars Integrated Invoice</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="preview-toolbar no-print" id="previewToolbar">
+    <button type="button" class="btn btn-secondary" id="editInvoice">← Back to Edit</button>
+    <span>Review your invoice. Return to editing whenever you need to make a change.</span>
+    <button type="button" class="btn btn-primary" id="confirmPrint">Print / Save PDF</button>
+  </div>
+  <main class="invoice" id="invoice">
+    <div class="document-switcher no-print">
+      <label for="documentType">Document Type</label>
+      <select id="documentType">
+        <option value="invoice">Invoice</option>
+        <option value="receipt" disabled>Receipt</option>
+        <option value="quotation">Quotation</option>
+      </select>
+      <span id="documentHint">Enter Amount Paid to enable Receipt.</span>
+      <label for="documentPosition">Title position</label>
+      <select id="documentPosition" aria-label="Invoice, receipt or quotation box position">
+        <option value="left">Left</option>
+        <option value="center">Center</option>
+        <option value="right">Right</option>
+      </select>
+    </div>
+    <header class="invoice-header">
+      <section class="brand">
+        <img class="logo" src="logo.png" alt="EL Seedars Integrated logo">
+        <div>
+          <h1 contenteditable="true">EL Seedars Integrated</h1>
+          <p class="tagline">Professionalism is our watchword</p>
+        </div>
+      </section>
+      <div class="header-info" data-position="left">
+        <div class="header-document"><h2 id="documentTitle">INVOICE</h2><input id="invoiceNumber" type="text" value="" aria-label="Document number"></div>
+        <section class="company-details" aria-label="Editable office address">
+          <input id="officeStreet" type="text" value="Plot C1, Rd 13, 3rd Avenue" aria-label="Office street address">
+          <input id="officeCity" type="text" value="Gwarimpa Abuja" aria-label="Office city">
+          <input id="officeCountry" type="text" value="Nigeria" aria-label="Office country">
+          <input id="officePhone" type="text" inputmode="numeric" pattern="[0-9]*" value="07034734911" aria-label="Office phone number">
+          <input id="officeEmail" type="email" value="elseedars@gmail.com" aria-label="Office email">
+        </section>
+      </div>
+    </header>
+
+    <section class="billing-grid">
+      <div class="bill-card" id="billToCard">
+        <h3>CUSTOMER DETAILS</h3>
+        <div class="customer-name-fields">
+          <label>Title (optional)<select id="customerPrefix"><option value="">None</option><option>Mr</option><option>Mrs</option><option>Ms</option><option>Miss</option><option>Dr</option><option>Engr</option><option>Chief</option></select></label>
+          <label>Customer/Company<input id="customerName" type="text" placeholder="Enter name"></label>
+        </div>
+        <label>Address<textarea id="customerAddress" rows="2" placeholder="Address"></textarea></label>
+        <label>Phone<input id="customerPhone" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Phone"></label>
+      </div>
+      <div class="bill-card" id="projectCard">
+        <h3 class="project-heading">PROJECT DETAILS <span class="project-date-separator">|</span> <input id="invoiceDate" type="date" aria-label="Document date"><span id="formattedDate" class="formatted-date"></span></h3>
+        <label>Project/Site<input id="projectName" type="text" placeholder="Project or site"></label>
+        <label>Location<textarea id="projectLocation" rows="2" placeholder="Location"></textarea></label>
+      </div>
+    </section>
+
+    <section class="print-details" aria-hidden="true">
+      <div class="print-detail-card" id="printCustomer"><h3>CUSTOMER DETAILS</h3><div class="print-lines"></div></div>
+      <div class="print-detail-card" id="printProject"><h3 class="project-heading">PROJECT DETAILS <span class="project-date-separator">|</span> <span id="printFormattedDate"></span></h3><div class="print-lines"></div></div>
+    </section>
+
+    <div id="tablesContainer"></div>
+    <button type="button" class="btn btn-light no-print" id="addTable">＋ Add Table</button>
+    <datalist id="units"><option value="pcs"><option value="m"><option value="ft"><option value="kg"><option value="g"><option value="L"><option value="bags"><option value="hours"><option value="days"><option value="sets"></datalist>
+    <datalist id="measureNames"><option value="Qty"><option value="Depth"><option value="Weight"><option value="Length"><option value="Volume"><option value="Hours"></datalist>
+
+    <section class="lower-grid">
+      <div class="notes">
+        <h3>NOTES</h3>
+        <textarea id="notes" rows="4" placeholder="Additional notes (optional)"></textarea><div id="printNotes" class="print-notes" aria-hidden="true"></div>
+        <section class="payment-details">
+          <h3>PAYMENT DETAILS</h3>
+          <label>Account Name<input id="accountName" type="text" placeholder="Enter account name"></label>
+          <label>Account Number<input id="accountNumber" type="text" inputmode="numeric" pattern="[0-9]{10}" minlength="10" maxlength="10" placeholder="10-digit account number" aria-describedby="accountNumberHint"><span id="accountNumberHint" class="field-hint" hidden>Enter exactly 10 digits.</span></label>
+          <label>Bank Name<input id="bankName" type="text" placeholder="Enter bank name"></label>
+        </section>
+        <section class="print-payment" id="printPayment" aria-hidden="true"><h3>PAYMENT DETAILS</h3><div class="print-lines"></div></section>
+      </div>
+      <div class="totals">
+        <div class="vat-line">
+          <label for="vatRate">VAT</label>
+          <span><input id="vatRate" type="text" inputmode="decimal" value="0.0" aria-label="VAT percentage" pattern="[0-9]*([.][0-9]*)?">%</span>
+          <strong id="vatAmount">₦0.00</strong>
+        </div>
+        <div class="grand-total"><span>Total</span><strong id="total">₦0.00</strong></div>
+        <div class="paid-line">
+          <label for="amountPaid">Amount Paid</label>
+          <span class="money-input">₦<input id="amountPaid" class="formatted-number" type="text" inputmode="decimal" placeholder="00"></span>
+        </div>
+        <div class="balance"><span>Balance Due</span><strong id="balance">₦0.00</strong></div>
+      </div>
+    </section>
+
+    <section class="receipt-banner" id="receiptBanner" aria-hidden="true">
+      <span>PAYMENT RECEIVED</span>
+      <strong id="receiptAmount">₦0.00</strong>
+      <small id="receiptReference"></small>
+    </section>
+
+    <footer>
+      <div class="footer-socials" aria-label="Social media and WhatsApp contacts">
+        <label class="social-row social-whatsapp" for="whatsappNumber">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.8a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1.3-4.5A8.5 8.5 0 1 1 20.5 11.8Z"/><path d="M8.7 7.5c-.4-.1-.7 0-1 .4-.5.5-.8 1.1-.8 1.8 0 2 2.8 5 5.1 6.1 1.5.7 2.4.6 3.1.2.8-.4 1.4-1.3 1.4-1.7 0-.2-.2-.3-.5-.5l-1.6-.7c-.2-.1-.4-.1-.6.2l-.6.8c-.2.2-.4.3-.7.1a9 9 0 0 1-2.9-2.5c-.2-.3-.1-.5.1-.7l.5-.6c.1-.2.2-.4.1-.6l-.8-1.8c-.1-.2-.2-.4-.5-.4Z"/></svg>
+          <input id="whatsappNumber" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="WhatsApp number" aria-label="WhatsApp number">
+          <span class="social-value"></span>
+        </label>
+        <label class="social-row social-facebook" for="facebookName">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.2 21v-8.1h2.7l.4-3.3h-3.1V7.5c0-1 .3-1.7 1.7-1.7h1.6V2.9c-.3 0-1.4-.1-2.6-.1-2.8 0-4.6 1.7-4.6 4.8v2H7.5v3.3h2.8V21Z"/></svg>
+          <input id="facebookName" type="text" placeholder="Facebook name or page" aria-label="Facebook name or page">
+          <span class="social-value"></span>
+        </label>
+        <label class="social-row social-instagram" for="instagramName">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle class="ig-dot" cx="17.5" cy="6.5" r="1"/></svg>
+          <input id="instagramName" type="text" placeholder="Instagram handle" aria-label="Instagram handle">
+          <span class="social-value"></span>
+        </label>
+      </div>
+      <div class="signature has-no-upload">
+        <div class="signature-upload no-print">
+          <label class="signature-button" for="signatureFile">Upload Signature</label>
+          <input id="signatureFile" type="file" accept="image/*">
+        </div>
+        <label class="signature-color-control no-print" id="signatureColorControl" for="signatureColor" hidden>Signature colour <input id="signatureColor" type="color" value="#203752" aria-label="Choose uploaded signature colour"></label>
+        <img id="signatureImage" class="signature-image" alt="Uploaded signature" hidden>
+        <span id="signatureScript" class="signature-script" aria-hidden="true" hidden></span>
+        <div class="signature-line"></div>
+        <input id="signerName" type="text" value="John Doe" placeholder="John Doe" aria-label="Signature name">
+      </div>
+    </footer>
+    <div class="services-strip">
+      <div class="services-list">
+        <span>Geophysical Survey</span><span>Borehole Drilling</span><span>Technical Services</span><span>Solar Solutions</span>
+      </div>
+      <em>“Reliable Solutions for a Better Tomorrow”</em>
+    </div>
+  </main>
+
+  <nav class="actions no-print">
+    <button type="button" class="btn btn-secondary" id="newInvoice">New Invoice</button>
+    <button type="button" class="btn btn-primary" id="printInvoice">Preview Invoice</button>
+  </nav>
+
+  <script src="Script.js"></script>
+</body>
+</html>
