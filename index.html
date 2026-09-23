@@ -6,7 +6,26 @@
   <title>EL Seedars Integrated Invoice</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="auth-locked">
+  <section class="auth-screen no-print" id="authScreen" aria-label="Account access">
+    <div class="auth-card">
+      <img src="logo.png" alt="EL Seedars Integrated" class="auth-logo">
+      <h1>EL Seedars Integrated</h1>
+      <p id="authIntro">Loading account access…</p>
+      <form id="authForm" hidden>
+        <label>Email<input id="authEmail" type="email" autocomplete="email" required></label>
+        <label>Password<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required></label>
+        <button class="btn btn-primary auth-submit" id="authSubmit" type="submit">Log in</button>
+      </form>
+      <button class="auth-link" id="authToggle" type="button" hidden>Create an account</button>
+      <button class="auth-link" id="authReset" type="button" hidden>Forgot password?</button>
+      <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+  <div class="account-bar no-print" id="accountBar" hidden>
+    <span id="accountEmail"></span><span id="syncStatus" role="status" aria-live="polite"></span>
+    <button class="btn btn-secondary" type="button" id="signOutButton">Sign out</button>
+  </div>
   <div class="preview-toolbar no-print" id="previewToolbar">
     <button type="button" class="btn btn-secondary" id="editInvoice">← Back to Edit</button>
     <span>Review your invoice. Return to editing whenever you need to make a change.</span>
@@ -151,6 +170,6 @@
     <button type="button" class="btn btn-primary" id="printInvoice">Preview Invoice</button>
   </nav>
 
-  <script src="Script.js"></script>
+  <script type="module" src="auth.js"></script>
 </body>
 </html>

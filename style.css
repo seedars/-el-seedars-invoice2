@@ -865,3 +865,31 @@ body.preview .notes:not(.print-hide-notes) > h3 { display: block !important; }
   .signature.has-no-upload { display: none !important; }
   .notes:not(.print-hide-notes) > h3 { display: block !important; }
 }
+
+/* Account access is required before invoice data is shown. */
+body.auth-locked .invoice,
+body.auth-locked .actions,
+body.auth-locked .preview-toolbar { display: none !important; }
+.auth-screen { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
+.auth-card {
+  width: min(410px, 100%);
+  padding: 28px;
+  background: #fff;
+  border-top: 3px solid var(--blue);
+  border-radius: 8px;
+  box-shadow: 0 12px 35px rgba(27,54,70,.12);
+  text-align: center;
+}
+.auth-logo { width: 70px; height: 55px; object-fit: contain; }
+.auth-card h1 { margin: 8px 0; font-size: 22px; color: #303438; }
+.auth-card p { color: var(--muted); }
+.auth-card form { text-align: left; }
+.auth-card form label { margin-top: 12px; }
+.auth-submit { width: 100%; margin-top: 17px; }
+.auth-link { display: block; margin: 12px auto 0; border: 0; background: transparent; color: var(--deep-blue); cursor: pointer; text-decoration: underline; }
+.auth-status { min-height: 1.2em; font-size: 12px; }
+.auth-status.error { color: #a92d44; }
+.account-bar { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; padding: 8px 16px; background: #eaf6fb; font-size: 12px; }
+.account-bar #syncStatus { color: var(--muted); }
+.account-bar .btn { padding: 6px 10px; font-size: 11px; }
+@media print { .auth-screen, .account-bar { display: none !important; } }

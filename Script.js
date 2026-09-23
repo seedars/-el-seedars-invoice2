@@ -3,6 +3,10 @@ const vatRateInput = document.getElementById('vatRate');
 const amountPaidInput = document.getElementById('amountPaid');
 const money = new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 2 });
 const itemAmount = new Intl.NumberFormat('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function writeSavedValue(key, value) {
+  localStorage.setItem(key, value);
+  window.elSeedarsSync?.();
+}
 
 function safeNumber(value) {
   const parsed = Number.parseFloat(String(value).replace(/,/g, ''));
@@ -72,7 +76,7 @@ function updateSocialContacts() {
     field.closest('.social-row').querySelector('.social-value').textContent = value;
     saved[id] = field.value;
   });
-  localStorage.setItem('el-seedars-social-contacts', JSON.stringify(saved));
+  writeSavedValue('el-seedars-social-contacts', JSON.stringify(saved));
 }
 try {
   const saved = JSON.parse(localStorage.getItem('el-seedars-social-contacts') || '{}');
@@ -89,7 +93,7 @@ const positionSelect = document.getElementById('documentPosition');
 const headerInfo = document.querySelector('.header-info');
 function updateHeaderPosition() {
   headerInfo.dataset.position = positionSelect.value;
-  localStorage.setItem('el-seedars-title-position', positionSelect.value);
+  writeSavedValue('el-seedars-title-position', positionSelect.value);
 }
 positionSelect.addEventListener('change', updateHeaderPosition);
 const savedPosition = localStorage.getItem('el-seedars-title-position');
@@ -111,7 +115,7 @@ officeFieldIds.forEach(id => document.getElementById(id).addEventListener('input
 window.addEventListener('resize', fitOfficeAddress);
 function saveOfficeDetails() {
   const details = Object.fromEntries(officeFieldIds.map(id => [id, document.getElementById(id).value]));
-  localStorage.setItem('el-seedars-office-details', JSON.stringify(details));
+  writeSavedValue('el-seedars-office-details', JSON.stringify(details));
 }
 function loadOfficeDetails() {
   try {
@@ -145,7 +149,7 @@ function commitPrintedInvoiceNumber() {
   const year = d.getFullYear();
   const key = `elSeedarsInvoiceSerial-${year}`;
   const serial = Number(localStorage.getItem(key) || '1');
-  localStorage.setItem(key, String(serial + 1));
+  writeSavedValue(key, String(serial + 1));
   return serial + 1;
 }
 
@@ -433,7 +437,7 @@ function loadSignatureSource(dataUrl, persist = false) {
     }
     if (persist) {
       ctx.putImageData(imageData, 0, 0);
-      try { localStorage.setItem('el-seedars-signature', canvas.toDataURL('image/png')); }
+      try { writeSavedValue('el-seedars-signature', canvas.toDataURL('image/png')); }
       catch (_) { /* Large images can exceed browser storage; the current upload still works. */ }
     }
     signatureBase = { width: canvas.width, height: canvas.height, pixels: new Uint8ClampedArray(d) };
@@ -488,7 +492,7 @@ function saveDraft() {
     }))
   }));
   try {
-    localStorage.setItem('el-seedars-current-draft', JSON.stringify({
+    writeSavedValue('el-seedars-current-draft', JSON.stringify({
       fields, tables, companyName: document.querySelector('.brand h1').textContent,
       manualNumber: !!document.getElementById('invoiceNumber').dataset.manualNumber
     }));
